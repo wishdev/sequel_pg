@@ -16,6 +16,10 @@ end
 if (have_library('pq') || have_library('libpq') || have_library('ms/libpq')) && have_header('libpq-fe.h')
   have_func 'PQsetSingleRowMode'
   create_makefile("sequel_pg")
+  #Check for --no-unefined ldflag -- fix for Gentoo users
+  makefile = File.read('./Makefile')
+  fixed_makefile = makefile.gsub( /\s-Wl,--no-undefined\s/, "\n")
+  File.open('Makefile', "w") {|file| file.puts fixed_makefile }
 else
   puts 'Could not find PostgreSQL build environment (libraries & headers): Makefile not created'
 end
